@@ -157,3 +157,46 @@ Docker Compose
 * We can use docker volumes for data persistence between container restarts.
 * To stop all the containers and remove the network, we can run:
     docker-compose -f mongo.yaml down
+
+Building Docker Image
+
+Creating Dockerfile
+* In order to build the docker image, we need to copy the contents of the application. Could be via jar, war, bundle.js, executable file.
+* Dockerfile is the blueprint for building images.
+* Every Dockerfile starts with basing it on another image. If Node application, then it will be node. The first line will be => FROM NODE
+* If we instead do it with a lower level image like alpine, then we'll have to install node ourselves.
+* RUN => Execute any linux command in dockerfile
+* RUN mkdir -p /home/app => the directory will be created inside the container. 
+* COPY source destination => Copy the files from source in my local inside the container image.
+    * RUN cp source destination => this would copy the source from the docker image to the destination which will also be the docker image.
+* CMD => Executes an entrypoint linux command.
+* There could be multiple RUN commands but only one entrypoint command which will start the server.
+* Env variables can be specified in env files or docker compose or dockerfile.
+* Env files is the most recommended one.
+* If we go to hub.docker.com => node and click on any of the image tags, we can see the dockerfile for it.
+* Instead of specifying loads of RUN commands you can specify a shell script to run via ENTRYPOINT command. ENTRYPOINT ["entrypoint.sh"]
+
+Building Docker image using Dockerfile
+* docker build -t(tag) go-app:1.0 .
+    Output: successfully built image_id
+
+* writing image sha256:3c3f8fb8cb88ec9f41f321f492f7004b8d96386bf0f883acfca2e28db0  0.0s
+* naming to docker.io/library/go-app:1.0
+* We'll be able to see our image go-app when running docker images.
+* This image can then be pushed to a docker repository by a jenkins pipeline and a server can pull the image.
+* Whenever we adjust the docker file, we need to rebuild the image.
+* Delete image => docker rmi image_id
+    * The container should be deleted first
+    * Find the docker container 
+        docker ps -a | grep go-app
+        docker rm container_id
+* docker: Error response from daemon: OCI runtime create failed: container_linux.go:380: starting container process caused: exec: "/home/app/entrypoint.sh": permission denied: unknown. => fixed by chmod +x
+
+* Error on running the image: 
+    docker run go-app:1.0       
+    standard_init_linux.go:228: exec user process caused: no such file or directory
+
+* docker exec -it a70ce063f80a /bin/bash
+    Some of the containers might not have bash installed. In that case use /bin/sh instead of /bin/bash.
+    Error response from daemon: Container is not running
+* env command will give us all the environment variables.
