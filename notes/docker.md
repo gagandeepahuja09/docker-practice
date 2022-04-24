@@ -200,3 +200,25 @@ Building Docker image using Dockerfile
     Some of the containers might not have bash installed. In that case use /bin/sh instead of /bin/bash.
     Error response from daemon: Container is not running
 * env command will give us all the environment variables.
+
+
+Docker private repository
+* For pushing out built docker images.
+* We'll use AWS ECR.(many more options available like nexus, digital ocean).
+    ECR => Elastic Container Registry
+* Docker login
+    
+Image Naming in Docker Repositories
+* registryDomain/imageName:tag ==> eg. of registryDomain => c.rzp.io
+* while downloading from dockerhub, it's actually a shorthand.
+    docker pull mongo:4.2 means that behind the scenes 
+        docker pull docker.io/library/mongo:4.2 will get fired.
+* In AWS ECR:
+    docker pull random-number.dkr.ecr.region-name.amazonaws.com/go-app:1.0
+* Use docker tag to make a copy of the existing image and rename it so that it has the registryDomain. 
+    docker tag go-app:1.0 random-number.dkr.ecr.region-name.amazonaws.com/go-app:1.0
+* docker push registryDomain/imageName:tag
+* Change in version
+    1. docker build
+    2. docker tag
+    3. docker push
