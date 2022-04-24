@@ -117,7 +117,43 @@ Docker Network
 * docker network ls => there would be some auto-generated networks.
 * docker network create mongo-network
 
-Steps
+Steps for Developing the network and the containers
 * Pull images of both mongo, mongo-express.
 * Mongo network create.
 * In order to make a container run in a network, we need to specify the network name while running the command.
+* docker run -d \
+    > -p 27017:27017 \
+    > -e MONGO_INITDB_ROOT_USERNAME=admin \
+    > -e MONGO_INITDB_ROOT_PASSWORD=password \
+    > --name mongodb \
+    > --net mongo-network \
+    > mongo
+* In mongo express, even if we specify the correct container name for mongodb, it won't work if it's not running in the same network.
+* docker run -d \
+    > -p 8081:8081 \
+    > -e ME_CONFIG_MONGODB_ADMINUSERNAME=admin \
+    > -e ME_CONFIG_MONGODB_ADMINPASSWORD=password \
+    > --net mongo-network \
+    > --name mongo-express \
+    > -e ME_CONFIG_MONGODB_SERVER=mongodb \
+    > mongo-express
+* docker logs container_name tail -f
+* tail => last few logs
+* -f => stream the logs
+
+Docker Compose
+* The above process can be automated via docker compose.
+* version: '3'(latest version of docker-compose), services: is common in all docker files.
+* services:
+    mongodb // this is the container name specified via --name in docker run.
+* Docker compose takes care of creating a common network.
+    * docker-compose -f mongo.yaml up
+    * up will start all the containers in mongo.yaml
+* When running, logs of both the containers will be mixed as we are starting them at the same time in parallel.
+* Mongo express will be waiting for mongo db to start.
+* Creating network "docker-practice_default" with the default driver
+    * Network automatically created.
+* NOTE: The data when restarting the container is gone, there is no persistence by default.
+* We can use docker volumes for data persistence between container restarts.
+* To stop all the containers and remove the network, we can run:
+    docker-compose -f mongo.yaml down
