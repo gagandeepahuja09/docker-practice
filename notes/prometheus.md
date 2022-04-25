@@ -19,3 +19,32 @@ Prometheus Architecture
 3. HTTP Server
     * it accepts queries(promql) for the stored data.
     * it can be viewed through Prometheus UI / Grafana(data visualization tool).
+
+Targets And Metrics
+Targets => Whatever a prometheus server is monitoring. It could be any of the following
+    * Linux/Windows server
+    * Apache server
+    * Single application
+    * Service like database
+
+Metrics => Each target has units of monitoring.
+    * Eg. CPU status, Memory/Disk space usage, Exceptions count, etc.
+    * They have human readable text based format.
+        It has TYPE, HELP attributes for increasing its readability.
+        HELP => Metrics description.
+        TYPE => 3 metric types
+            1) Counter => how many times x happened. eg no of requests, no of exceptions, etc.
+            2) Gauge => what is the current value of x now. can go both up and down. eg. CPU usage value, Disk space, etc.
+            3) Histogram => For tracking how long something took or how big the size of a request was.
+
+How does prometheus collect metrics from the target?
+* Prom data retrieval worker pulls data from HTTP endpoints.
+* Data must be pushed at hostadress/metrics.
+* The data must be in a correct format that prometheus understands.
+* Some services expose /metrics endpoint by default.
+
+Exporter
+1. Script or service that fetches metrics from the target.
+2. Converts into a format that prometheus understands.
+3. Exposes them at /metrics where prometheus data retrieval worker can scrape them.
+    Prometheus has exporters for various different kinds of services.
