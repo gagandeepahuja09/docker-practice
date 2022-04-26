@@ -41,3 +41,27 @@ Secret
 * Component used to store secret data like credentials, certificates, etc.
 * Stored in base64 encoding.
 * ConfigMap and secret variables can be used as env variables/properties file.
+
+Volumes
+* If the pod gets restarted, then the data would be gone.
+* K8s volumes attaches a physical storage like hard drive to our pod.
+    * The storage could be on a local machine or on a remote storage outside of the k8s cluster.
+* K8s doesn't mainage data persistence. It has to be taken care by the dev.
+
+
+Service
+* In a distributed environment to avoid SPOF, we replicate everything.
+* Service has 2 functionalities:
+    * Permanent IP
+    * Load balancer: which decides the pod that has to be used.
+
+
+Deployment
+* Blueprint for pods. We won't be create pods rather deployments.
+* It's an abstraction of pods.
+* DB services can't be replicated via deployment because it's stateful. This is because we would need a common storage. Some pods could be reading, while others could be writing. We need to avoid data inconsistencies.
+
+StatefulSet
+* For stateful apps => MySQL, MongoDB, Redis, ElasticSearch.
+* Ensures that there are no data inconsistencies.
+* Deploying StatefulSets is considered tedious and hence often storage services are hosted outside of K8s cluster.
